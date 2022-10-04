@@ -63,6 +63,18 @@ public class TileMap : MonoBehaviour
     if (Input.anyKeyDown)
     {
       //   DrawTile();
+      // CalculateLocationFromPosition
+    }
+
+    // TODO: We're going to replace any Input handling with Rewired
+    // Double checking this is what I should use first though.
+    if (Input.GetButtonDown("Fire1"))
+    {
+      Vector3 mousePosition = Input.mousePosition;
+
+      var clickedLocation = CalculateLocationFromPosition(mousePosition);
+
+      Debug.Log($"{clickedLocation.row}:{clickedLocation.col}");
     }
   }
 
@@ -107,6 +119,13 @@ public class TileMap : MonoBehaviour
     xPosition += gridOffset.x;
 
     return new Vector3(xPosition, yPosition, 0);
+  }
+
+  Location CalculateLocationFromPosition(Vector3 worldPosition)
+  {
+    // TODO: Convert back from worldPosition to location
+
+    return new Location(0, 0);
   }
 
   int GetSortingOrderFromLocation(Location location)
