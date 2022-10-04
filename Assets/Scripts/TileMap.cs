@@ -17,6 +17,7 @@ public class TileMap : MonoBehaviour
   public int ROW_OFFSET = 238;
   public int height = 10;
   public int width = 10;
+  public Vector2 gridOffset = new Vector2(-3, -2);
 
   // Start is called before the first frame update
   void Start()
@@ -96,10 +97,14 @@ public class TileMap : MonoBehaviour
     float rowUnitOffset = (float)ROW_OFFSET / (float)TILE_HEIGHT;
     yPosition -= rowUnitOffset * location.row;
 
+    yPosition += gridOffset.y;
+
     float xPosition = location.col;
 
     float xUnitOffset = (float)X_OFFSET / (float)TILE_WIDTH;
     xPosition -= (0.25f - xUnitOffset) * location.col;
+
+    xPosition += gridOffset.x;
 
     return new Vector3(xPosition, yPosition, 0);
   }
