@@ -123,7 +123,7 @@ public class TileMap : MonoBehaviour
 
   Location CalculateLocationFromPosition(Vector3 worldPosition)
   {
-    // TODO: Convert back from worldPosition to location
+    // TODO: Convert back from worldPosition to 
 
     return new Location(0, 0);
   }
