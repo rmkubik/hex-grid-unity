@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TileMap : MonoBehaviour
@@ -18,6 +19,7 @@ public class TileMap : MonoBehaviour
   public int height = 10;
   public int width = 10;
   public Vector2 gridOffset = new Vector2(-3, -2);
+  public bool renderHexBorders = false;
 
   // Start is called before the first frame update
   void Start()
@@ -58,6 +60,25 @@ public class TileMap : MonoBehaviour
     grid.ForEach((GridCell<GameObject> cell, GridCell<GameObject>[] cells) =>
     {
       cell.value.transform.position = CalculatePositionFromLocation(cell.location);
+
+      var lineRenderer = cell.value.GetComponent<LineRenderer>();
+      lineRenderer.positionCount = 7;
+
+      if (renderHexBorders)
+      {
+        var collider = cell.value.GetComponent<PolygonCollider2D>();
+
+        lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+        lineRenderer.widthMultiplier = 0.005f;
+
+        var colliderPoints = collider.points.Select(point => new Vector3(point.x + cell.value.transform.position.x, point.y + cell.value.transform.position.y, 0));
+        colliderPoints = colliderPoints.Append(colliderPoints.First());
+        lineRenderer.SetPositions(colliderPoints.ToArray());
+      }
+      else
+      {
+        lineRenderer.positionCount = 0;
+      }
     });
 
     if (Input.anyKeyDown)
@@ -66,15 +87,27 @@ public class TileMap : MonoBehaviour
       // CalculateLocationFromPosition
     }
 
+
+
     // TODO: We're going to replace any Input handling with Rewired
     // Double checking this is what I should use first though.
     if (Input.GetButtonDown("Fire1"))
     {
       Vector3 mousePosition = Input.mousePosition;
 
-      var clickedLocation = CalculateLocationFromPosition(mousePosition);
+      var mouseWorldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
 
-      Debug.Log($"{clickedLocation.row}:{clickedLocation.col}");
+      grid.ForEach((GridCell<GameObject> cell, GridCell<GameObject>[] cells) =>
+      {
+        var collider = cell.value.GetComponent<PolygonCollider2D>();
+
+        if (collider.OverlapPoint(mouseWorldPosition))
+        {
+          Debug.Log(cell.location);
+        }
+      });
+
+      Debug.Log($"{mousePosition.x}:{mousePosition.y}");
     }
   }
 

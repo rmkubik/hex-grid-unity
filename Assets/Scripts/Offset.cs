@@ -1,6 +1,0 @@
-class Offset
-{
-  public Offset()
-  {
-  }
-}

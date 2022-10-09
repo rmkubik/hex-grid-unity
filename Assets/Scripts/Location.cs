@@ -8,4 +8,9 @@ class Location
     this.row = row;
     this.col = col;
   }
+
+  public override string ToString()
+  {
+    return $"row:{row}, col:{col}";
+  }
 }
