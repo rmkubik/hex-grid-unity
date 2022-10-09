@@ -5,8 +5,10 @@ using UnityEngine;
 
 public class TileMap : MonoBehaviour
 {
+  public GameObject hexPrefab;
   public GameObject tilePrefab;
   private Object[] forestTextures;
+  private Object[] locationTextures;
   private GameObject tile;
   private GameObject[] tiles;
   private HexGrid<GameObject> grid;
@@ -24,12 +26,13 @@ public class TileMap : MonoBehaviour
   // Start is called before the first frame update
   void Start()
   {
-    forestTextures = Resources.LoadAll("Tiles/Tiles Forests", typeof(Texture2D));
+    forestTextures = Resources.LoadAll("Hexes/Tiles Forests", typeof(Texture2D));
+    locationTextures = Resources.LoadAll("Tiles/Locations 134x134", typeof(Texture2D));
 
     grid = new HexGrid<GameObject>(width, height, (Location location) =>
     {
       var cell = Instantiate(
-        tilePrefab,
+        hexPrefab,
         CalculatePositionFromLocation(location),
         Quaternion.identity
       );
@@ -48,10 +51,6 @@ public class TileMap : MonoBehaviour
 
       return cell;
     });
-
-    // grid.ForEach((cell, cells) => Debug.Log(cell));
-
-    // DrawTile();
   }
 
   // Update is called once per frame
@@ -81,14 +80,6 @@ public class TileMap : MonoBehaviour
       }
     });
 
-    if (Input.anyKeyDown)
-    {
-      //   DrawTile();
-      // CalculateLocationFromPosition
-    }
-
-
-
     // TODO: We're going to replace any Input handling with Rewired
     // Double checking this is what I should use first though.
     if (Input.GetButtonDown("Fire1"))
@@ -103,29 +94,30 @@ public class TileMap : MonoBehaviour
 
         if (collider.OverlapPoint(mouseWorldPosition))
         {
-          Debug.Log(cell.location);
+          var tileOffset = new Vector3(0, -0.13f, 0);
+
+          var tile = Instantiate(
+            tilePrefab,
+            CalculatePositionFromLocation(cell.location) + tileOffset,
+            Quaternion.identity
+          );
+
+          var spriteRenderer = tile.GetComponent<SpriteRenderer>();
+          spriteRenderer.sortingOrder = GetSortingOrderFromLocation(cell.location) + 1;
+
+          Texture2D tileTexture = (Texture2D)locationTextures[Random.Range(0, locationTextures.Length)];
+
+          spriteRenderer.sprite = Sprite.Create(
+            tileTexture,
+            new Rect(0, 0, tileTexture.width, tileTexture.height),
+            new Vector2(0.5f, 0.5f),
+            TILE_WIDTH
+          );
         }
       });
 
       Debug.Log($"{mousePosition.x}:{mousePosition.y}");
     }
-  }
-
-  void DrawTile()
-  {
-    if (!tile)
-    {
-      tile = Instantiate(tilePrefab, new Vector3(0, 0, 0), Quaternion.identity);
-    }
-
-    Texture2D forestTexture = (Texture2D)forestTextures[Random.Range(0, forestTextures.Length)];
-
-    var renderer = tile.GetComponent<SpriteRenderer>();
-    renderer.sprite = Sprite.Create(
-        forestTexture,
-        new Rect(0, 0, TILE_WIDTH, TILE_HEIGHT),
-        new Vector2(0.5f, 0.5f)
-    );
   }
 
   Vector3 CalculatePositionFromLocation(Location location)
@@ -152,13 +144,6 @@ public class TileMap : MonoBehaviour
     xPosition += gridOffset.x;
 
     return new Vector3(xPosition, yPosition, 0);
-  }
-
-  Location CalculateLocationFromPosition(Vector3 worldPosition)
-  {
-    // TODO: Convert back from worldPosition to 
-
-    return new Location(0, 0);
   }
 
   int GetSortingOrderFromLocation(Location location)

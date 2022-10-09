@@ -280,7 +280,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0aedcf849370545978dac01e933fcac9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilePrefab: {fileID: 4348481775940504027, guid: 446989a3f92d04e0885c5c1702c8c62f, type: 3}
+  hexPrefab: {fileID: 4348481775940504027, guid: 446989a3f92d04e0885c5c1702c8c62f, type: 3}
+  tilePrefab: {fileID: 4348481775940504027, guid: fe74102a83cb84528a7906f4b09f1464, type: 3}
   Y_OFFSET: 260
   X_OFFSET: -62
   ROW_OFFSET: 238
