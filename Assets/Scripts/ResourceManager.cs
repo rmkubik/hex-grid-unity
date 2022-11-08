@@ -4,23 +4,30 @@ using UnityEngine;
 
 public class ResourceManager : MonoBehaviour
 {
-  Dictionary<string, Texture2D> textures;
+  Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
 
   // Start is called before the first frame update
   void Start()
   {
-    // I need to load all textures off the disk
-    // Categorize them
-    // Make it so the rest of the app can grab a
-    // texture easily based on it's ID string
-    // This should also exclaim issues on duplicate
-    // identifies or something.
+    loadTextures("forestHex", "Hexes/Tiles Forests");
+    loadTextures("tileLocations", "Tiles/Locations 134x134");
+  }
 
-    // We have hex textures
-    // We have tile textures
+  void loadTextures(string prekey, string path)
+  {
+    var newTextures = Resources.LoadAll(path, typeof(Texture2D));
+    foreach (var newTexture in newTextures)
+    {
+      var key = prekey + '/' + newTexture.name;
 
-    // Is there any need to separate these textures, or is one
-    // giant map going to be perfectly fine?
+      if (textures.ContainsKey(key))
+      {
+        Debug.LogError("Duplicate resource key added! " + key);
+        break;
+      }
+
+      textures.Add(key, (Texture2D)newTexture);
+    }
   }
 
   Texture2D GetTexture(string key)
